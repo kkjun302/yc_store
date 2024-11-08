@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>양청달샘</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/omechu.css">
+  </head>
+  <body>
+    <header>
+      <a href="#"><img style="width: 70px; margin: 0 20%;" src="../images/tree_icon.png" alt=""><img src="../images/icon.png" alt="" style="width: 70px;"><img style="margin: 0 20%; width: 70px;" src="../images/bench_icon.png" alt=""></a>
+     </header>
+     <nav>
+       <a href="./main.html">홈</a>
+       <a href="./product.html">상품</a>
+       <a href="./omechu.html">오메추</a>
+       <a href="./board_suggestions.html">건의사항</a>
+     </nav>
+    <div class="content">
+      <canvas id="wheel" width="500" height="500"></canvas>
+      <button class="spin-button" onclick="spin()">돌리기</button>
+      <div id="result"></div>
+
+      <div id="popup" class="popup">
+      <div id="popup-content" class="popup-content">
+      <span id="popup-message"></span>
+      <button onclick="closePopup()">닫기</button>
+    </div>
+    </div>
+     </div>
+    
+
+    <script>
+      const foods = [
+        '파이리빵',
+        '소보로빵',
+        '패스츄리',
+        '소라빵',
+        '핫바',
+        '김치만두',
+        '구슬 아이스크림',
+        '팝콘',
+        '솜사탕',
+        '바 아이스크림',
+      ];
+      const colors = [
+        '#FF6384',
+        '#36A2EB',
+        '#FFCE56',
+        '#4BC0C0',
+        '#9966FF',
+        '#FF9F40',
+        '#FFCD56',
+        '#C9CBCF',
+        '#A4C2F4',
+        '#FF6F61',
+      ];
+      let canvas = document.getElementById('wheel');
+      let ctx = canvas.getContext('2d');
+      let arc = Math.PI / (foods.length / 2);
+      let startAngle = 0;
+      let spinAngleStart = 10;
+      let spinTime = 0;
+      let spinTimeTotal = 0;
+
+      function drawRouletteWheel() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.strokeStyle = 'black';
+        ctx.lineWidth = 2;
+        ctx.font = '16px Arial';
+
+        for (let i = 0; i < foods.length; i++) {
+          let angle = startAngle + i * arc;
+          ctx.fillStyle = colors[i];
+          ctx.beginPath();
+          ctx.moveTo(canvas.width / 2, canvas.height / 2);
+          ctx.arc(
+            canvas.width / 2,
+            canvas.height / 2,
+            canvas.width / 2,
+            angle,
+            angle + arc,
+            false
+          );
+          ctx.lineTo(canvas.width / 2, canvas.height / 2);
+          ctx.fill();
+          ctx.save();
+          ctx.fillStyle = 'white';
+          ctx.translate(
+            canvas.width / 2 +
+              Math.cos(angle + arc / 2) * (canvas.width / 2 - 50),
+            canvas.height / 2 +
+              Math.sin(angle + arc / 2) * (canvas.height / 2 - 50)
+          );
+          ctx.rotate(angle + arc / 2 + Math.PI / 2);
+          ctx.fillText(foods[i], -ctx.measureText(foods[i]).width / 2, 0);
+          ctx.restore();
+        }
+
+        // 화살표 표시
+        ctx.fillStyle = 'black';
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2 - 4, 0);
+        ctx.lineTo(canvas.width / 2 + 4, 0);
+        ctx.lineTo(canvas.width / 2 + 4, 20);
+        ctx.lineTo(canvas.width / 2 + 9, 20);
+        ctx.lineTo(canvas.width / 2 + 0, 30);
+        ctx.lineTo(canvas.width / 2 - 9, 20);
+        ctx.lineTo(canvas.width / 2 - 4, 20);
+        ctx.lineTo(canvas.width / 2 - 4, 0);
+        ctx.fill();
+      }
+
+      function rotateWheel() {
+        spinTime += 30;
+        if (spinTime >= spinTimeTotal) {
+          stopRotateWheel();
+          return;
+        }
+        let spinAngle =
+          spinAngleStart - easeOut(spinTime, 0, spinAngleStart, spinTimeTotal);
+        startAngle += (spinAngle * Math.PI) / 180;
+        drawRouletteWheel();
+        requestAnimationFrame(rotateWheel);
+      }
+
+      function stopRotateWheel() {
+        let degrees = (startAngle * 180) / Math.PI + 90;
+        let arcd = (arc * 180) / Math.PI;
+        let index = Math.floor((360 - (degrees % 360)) / arcd);
+        ctx.save();
+        ctx.font = 'bold 30px Arial';
+        let text = foods[index];
+        ctx.restore();
+
+        document.getElementById('popup-message').textContent =
+          '추천 음식: ' + text;
+        document.getElementById('popup').style.display = 'flex';
+      }
+
+      function closePopup() {
+        document.getElementById('popup').style.display = 'none';
+      }
+
+      drawRouletteWheel();
+
+      function easeOut(t, b, c, d) {
+        t /= d;
+        t--;
+        return c * (t * t * t + 1) + b;
+      }
+
+      function spin() {
+        spinAngleStart = Math.random() * 10 + 10;
+        spinTime = 0;
+        spinTimeTotal = Math.random() * 3000 + 4000;
+        rotateWheel();
+      }
+
+      drawRouletteWheel();
+    </script>
+  </body>
+  <footer>
+    <div class="footer-content">
+    </div>
+    <p>&copy; 2024 양청달샘 Made by KimKyungsu, KimJun, ParkWonJun</p>
+  </footer>
+</html>

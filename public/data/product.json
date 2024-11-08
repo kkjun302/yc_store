@@ -1,0 +1,22 @@
+[
+    {
+        "name": "야미야미 바나나우유",
+        "image": "../images/snacks/pro1.jpg",
+        "price": 1200
+    },
+    {
+        "name": "초코 아이콘",
+        "image": "../images/snacks/pro2.jpg",
+        "price": 2000
+    },
+    {
+        "name": "잼있는 딸기쿠키",
+        "image": "../images/snacks/pro3.jpg",
+        "price": 1200
+    },
+    {
+        "name": "초코웨하스",
+        "image": "../images/snacks/pro4.jpg",
+        "price": 2000
+    }
+]
