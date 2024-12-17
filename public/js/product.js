@@ -1,7 +1,6 @@
 fetch('../data/product.json')
-    .then(response=>response.json())
-    .then(data=>{
-        console.log(data);
+    .then(response => response.json())
+    .then(data => {
         const productGrid = document.querySelector('.product-grid');
         data.forEach(product => {
             const productDiv = document.createElement('div');
@@ -15,3 +14,21 @@ fetch('../data/product.json')
         });
     })
     .catch(error => console.error('Error loading products:', error));
+
+// 검색 기능
+document.querySelector('.search-box').addEventListener('submit', function (e) {
+    e.preventDefault(); 
+
+    const searchInput = document.querySelector('#search-input').value.trim(); 
+    const productCards = document.querySelectorAll('.product-grid .product'); 
+
+    productCards.forEach(card => {
+        const productName = card.querySelector('h2').textContent; 
+        
+        if (productName.indexOf(searchInput) !== -1) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none'; 
+        }
+    });
+});
