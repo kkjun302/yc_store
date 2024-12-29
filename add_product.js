@@ -1,4 +1,4 @@
-const sqlite3 = require('sqlite3').verbose();
+/*const sqlite3 = require('sqlite3').verbose();
 
 const db = new sqlite3.Database('./public/data/yangcheong_store.db', (err) => {
   if (err) {
@@ -69,7 +69,7 @@ db.serialize(() => {
 });
 
 db.close((err) => {
-  if (err) {
+  if (err) {*/
     return console.error('Error closing the database:', err.message);
   }
   console.log('Database connection closed.');
