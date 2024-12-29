@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     replyItem.classList.add('reply-item');
                     replyItem.innerHTML = `
                         <p><strong>관리자:</strong> ${reply.reply}</p>
+                        <button onclick="deleteReply(${reply.id}, ${suggestionId})">삭제</button>
                     `;
                     repliesContainer.appendChild(replyItem);
                 });
@@ -89,6 +90,18 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    window.deleteReply = function(replyId, suggestionId) {
+    fetch(`/api/replies/${replyId}`, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+            // 대댓글 목록 새로고침
+            loadReplies(suggestionId);
+        })
+        .catch(err => console.error("Failed to delete reply:", err));
+};
+
+    
     document.addEventListener('submit', function(e) {
         if (e.target.classList.contains('replyForm')) {
             e.preventDefault();
