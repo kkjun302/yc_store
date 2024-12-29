@@ -34,7 +34,7 @@ function displayProducts(page) {
       <img src="${product.image}" alt="Product Image" />
       <h2>${product.name}</h2>
       <p><strong>Price:</strong> &#8361 
-      product.price} </p>
+      ${product.price} </p>
     `;
     productGrid.appendChild(productDiv);
   });
