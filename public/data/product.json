@@ -22,7 +22,7 @@
     {
         "name": "감귤 청량바",
         "image": "../../images/snacks/pro5.jpg",
-        "price": 2000
+        "price": 900
     },
     {
         "name": "딸기웨하스",
@@ -32,22 +32,22 @@
     {
         "name": "우리밀 코코아 와플",
         "image": "../../images/snacks/pro7.jpg",
-        "price": 2000
+        "price": 500
     },
     {
         "name": "초코 가득바",
         "image": "../../images/snacks/pro8.jpg",
-        "price": 2000
+        "price": 1000
     },
     {
         "name": "이프로",
         "image": "../../images/snacks/pro9.jpg",
-        "price": 2000
+        "price": 1000
     },
     {
         "name": "아이시스",
         "image": "../../images/snacks/pro10.jpg",
-        "price": 2000
+        "price": 500
     },
     {
         "name": "떡볶이맛 스낵",
@@ -57,7 +57,7 @@
     {
         "name": "사르르 콘스낵",
         "image": "../../images/snacks/pro12.jpg",
-        "price": 2000
+        "price": 1500
     },
     {
         "name": "망고주스",
