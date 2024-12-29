@@ -54,8 +54,8 @@ let currentPage = 1;
 // 전체 상품 데이터 저장 변수
 let productData = [];
 
-// JSON 데이터 불러오기
-fetch('../data/product.json')
+// SQLite 기반 API에서 상품 데이터 불러오기
+fetch('/api/products')
   .then(response => response.json())
   .then(data => {
     productData = data; // 상품 데이터를 전역 변수에 저장
