@@ -1,193 +1,150 @@
-const express = require('express');
-const sqlite3 = require('sqlite3').verbose();
-const bodyParser = require('body-parser');
-const path = require('path');
+fetch('/api/products')
+  .then((response) => response.json())
+  .then((data) => {
+    const productGrid = document.querySelector('.product-grid');
+    data.forEach((product) => {
+      const productDiv = document.createElement('div');
+      productDiv.classList.add('product');
+      productDiv.innerHTML = `
+        <img src="${product.image}" alt="Product Image" />
+        <h2>${product.name}</h2>
+        <p><strong>Price:</strong> &#8361 ${product.price}</p>
+        <button class="like-button" data-product-id="${product.id}">♡ 좋아요</button>
+        <p>좋아요 수: <span class="like-count">${product.likes}</span></p>
+      `;
+      productGrid.appendChild(productDiv);
 
-const app = express();
-
-// 데이터베이스 초기화
-const db = new sqlite3.Database('./public/data/yangcheong_store.db', (err) => {
-  if (err) {
-    console.error('Database connection failed:', err.message);
-  } else {
-    console.log('Connected to the SQLite database.');
-    db.run(`CREATE TABLE IF NOT EXISTS suggestions (
-              id INTEGER PRIMARY KEY AUTOINCREMENT,
-              name TEXT NOT NULL,
-              suggestion TEXT NOT NULL
-            )`);
-            
-    
-    db.run(`
-      CREATE TABLE IF NOT EXISTS replies (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        suggestion_id INTEGER NOT NULL,
-        reply TEXT NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        FOREIGN KEY (suggestion_id) REFERENCES suggestions (id) ON DELETE CASCADE
-      )`
-    );
-    db.run(`CREATE TABLE IF NOT EXISTS products (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      name TEXT NOT NULL,
-      image TEXT NOT NULL,
-      price INTEGER NOT NULL,
-      likes INTEGER DEFAULT 0
-      )`);
-  }
-});
-
-
-
-
-// 미들웨어 설정
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.static('public'));
-
-// 메인 페이지 리다이렉트
-app.get('/', (req, res) => {
-  res.redirect('/html/main.html');
-});
-
-// 모든 제안 조회
-app.get('/api/suggestions', (req, res) => {
-  db.all("SELECT * FROM suggestions", [], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res.json(rows);
-  });
-});
-app.get('/api/products', (req, res) => {
-  db.all('SELECT * FROM products', [], (err, rows) => {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    }
-    res.json(rows);
-  });
-});
-
-// 새로운 제안 추가
-app.post('/api/suggestions', (req, res) => {
-  const { name, suggestion } = req.body;
-  db.run(
-    "INSERT INTO suggestions (name, suggestion) VALUES (?, ?)",
-    [name, suggestion],
-    function (err) {
-      if (err) {
-        res.status(400).json({ error: err.message });
-        return;
-      }
-      res.status(201).json({
-        message: "Suggestion added successfully",
-        id: this.lastID
+      const likeButton = productDiv.querySelector('.like-button');
+      likeButton.addEventListener('click', () => {
+        const likes = product.likes + 1;
+        updateLikes(product.id, likes, likeButton);
       });
-    }
-  );
-});
-app.post('/api/like', (req, res) => {
-  const likedProducts = req.body.liked_products; // req.body에서 liked_products 추출
-  console.log('Received data:', likedProducts);
+    });
+  })
+  .catch((error) => console.error('Error loading products:', error));
 
-  db.serialize(() => {
-    for (const [productId, likes] of Object.entries(likedProducts)) {
-      db.run(
-        'UPDATE products SET likes = ? WHERE id = ?',
-        [parseInt(likes), parseInt(productId)],
-        function (err) {
-          if (err) {
-            console.error(
-              'Error updating likes for product ID',
-              productId,
-              ':',
-              err.message
-            );
-          } else {
-            console.log(`Likes updated for product ID ${productId}`);
-          }
-        }
-      );
-    }
+// 좋아요 상태 업데이트
+function updateLikes(productId, likes, button) {
+  fetch('/api/like', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      liked_products: {
+        [productId]: likes,
+      },
+    }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      button.disabled = true; // 버튼 비활성화
+      const likeCount = button.closest('.product').querySelector('.like-count');
+      likeCount.textContent = likes; // 좋아요 수 업데이트
+    })
+    .catch((error) => console.error('Error updating likes:', error));
+}
+
+// 한 페이지에 표시할 상품 수
+const itemsPerPage = 9;
+
+// 현재 페이지
+let currentPage = 1;
+
+// 전체 상품 데이터 저장 변수
+let productData = [];
+
+// JSON 데이터 불러오기
+fetch('../data/product.json')
+  .then(response => response.json())
+  .then(data => {
+    productData = data; // 상품 데이터를 전역 변수에 저장
+    displayProducts(currentPage); // 첫 페이지 표시
+    createPagination(); // 페이지네이션 생성
+  })
+  .catch(error => console.error('Error loading products:', error));
+
+// 상품 표시 함수
+function displayProducts(page) {
+  const productGrid = document.querySelector('.product-grid');
+  productGrid.innerHTML = ""; // 기존 상품 제거
+
+  const startIndex = (page - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const productsToDisplay = productData.slice(startIndex, endIndex);
+
+  productsToDisplay.forEach(product => {
+    const productDiv = document.createElement('div');
+    productDiv.classList.add('product');
+    productDiv.innerHTML = `
+      <img src="${product.image}" alt="Product Image" />
+      <h2>${product.name}</h2>
+      <p><strong>Price:</strong> &#8361 
+      product.price} </p>
+    `;
+    productGrid.appendChild(productDiv);
   });
+}
 
-  res.status(200).json({ message: 'Likes updated successfully' });
-});
+// 페이지네이션 생성 함수
+function createPagination() {
+  const paginationContainer = document.createElement('div');
+  paginationContainer.classList.add('pagination');
+  const container = document.querySelector('#products');
+  container.appendChild(paginationContainer);
 
-// 특정 제안 삭제
-app.delete('/api/suggestions/:id', (req, res) => {
-  const { id } = req.params;
-  db.run("DELETE FROM suggestions WHERE id = ?", id, function (err) {
-    if (err) {
-      res.status(400).json({ error: err.message });
-      return;
+  const totalPages = Math.ceil(productData.length / itemsPerPage);
+
+  for (let i = 1; i <= totalPages; i++) {
+    const button = document.createElement('button');
+    button.textContent = i;
+
+    if (i === currentPage) {
+      button.classList.add('active'); // 현재 페이지 강조
     }
-    res.json({ message: "Suggestion deleted successfully" });
-  });
-});
 
-// 특정 대댓글 삭제
-app.delete('/api/replies/:id', (req, res) => {
-  const { id } = req.params;
+    button.addEventListener('click', () => {
+      currentPage = i;
+      displayProducts(currentPage); // 상품 갱신
+      document.querySelectorAll('.pagination button').forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active'); // 클릭된 버튼 강조
+    });
 
-  db.run("DELETE FROM replies WHERE id = ?", id, function (err) {
-    if (err) {
-      res.status(500).json({ error: err.message });
-      return;
-    } 
-    res.json({ message: "Reply deleted successfully" });
-  });
-});
-
-
-// 대댓글 API
-app.post('/api/replies', (req, res) => {
-  const { suggestion_id, reply } = req.body;
-
-  if (!suggestion_id || !reply) {
-      res.status(400).json({ error: "suggestion_id and reply are required." });
-      return;
+    paginationContainer.appendChild(button);
   }
+}
 
-  db.run(
-      `INSERT INTO replies (suggestion_id, reply) VALUES (?, ?)`,
-      [suggestion_id, reply],
-      function (err) {
-          if (err) {
-              res.status(500).json({ error: err.message });
-          } else {
-              res.status(201).json({
-                  message: "Reply added successfully",
-                  id: this.lastID
-              });
-          }
-      }
+// 검색 기능
+document.querySelector('.search-box').addEventListener('submit', function (e) {
+  e.preventDefault();
+
+  const searchInput = document.querySelector('#search-input').value.trim().toLowerCase();
+
+  const filteredProducts = productData.filter(product =>
+    product.name.toLowerCase().includes(searchInput)
   );
+
+  displayFilteredProducts(filteredProducts);
 });
 
+function displayFilteredProducts(filteredProducts) {
+  const productGrid = document.querySelector('.product-grid');
+  productGrid.innerHTML = "";
 
-app.get('/api/replies/:suggestion_id', (req, res) => {
-  const { suggestion_id } = req.params;
+  filteredProducts.forEach(product => {
+    const productDiv = document.createElement('div');
+    productDiv.classList.add('product');
+    productDiv.innerHTML = `
+      <img src="${product.image}" alt="Product Image" />
+      <h2>${product.name}</h2>
+      <p><strong>Price:</strong> &#8361 ${product.price} </p>
+    `;
+    productGrid.appendChild(productDiv);
+  });
 
-  db.all(
-      `SELECT id, reply, created_at FROM replies WHERE suggestion_id = ? ORDER BY created_at ASC`,
-      [suggestion_id],
-      (err, rows) => {
-          if (err) {
-              res.status(500).json({ error: err.message });
-          } else {
-              res.json(rows);
-          }
-      }
-  );
-});
-
-
-
-
-
-
-// Express 앱 인스턴스를 내보냄
-module.exports = app;
+  // 검색 결과에는 페이지네이션 제거
+  const paginationContainer = document.querySelector('.pagination');
+  if (paginationContainer) {
+    paginationContainer.remove();
+  }
+}
