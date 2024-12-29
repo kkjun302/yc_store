@@ -15,8 +15,88 @@
         "price": 1200
     },
     {
+        "name": "초코웨하스",
+        "image": "../images/snacks/pro4.jpg",
+        "price": 2000
+    },
+    {
+        "name": "감귤 청량바",
+        "image": "../../images/snacks/pro5.jpg",
+        "price": 2000
+    },
+    {
+        "name": "딸기웨하스스",
+        "image": "../../images/snacks/pro6.jpg",
+        "price": 2000
+    },
+    {
+        "name": "우리밀 코코아 와플플",
+        "image": "../../images/snacks/pro7.jpg",
+        "price": 2000
+    },
+    {
+        "name": "초코 가득바",
+        "image": "../../images/snacks/pro8.jpg",
+        "price": 2000
+    },
+    {
+        "name": "이프로",
+        "image": "../../images/snacks/pro9.jpg",
+        "price": 2000
+    },
+    {
+        "name": "아이시스",
+        "image": "../../images/snacks/pro10.jpg",
+        "price": 2000
+    },
+    {
+        "name": "떡볶이맛 스낵",
+        "image": "../../images/snacks/pro11.jpg",
+        "price": 2000
+    },
+    {
         "name": "사르르 콘스낵",
-        "image": "../KakaoTalk_20241101_200316515_11.jpg",
+        "image": "../../images/snacks/pro12.jpg",
+        "price": 2000
+    },
+    {
+        "name": "망고주스",
+        "image": "../../images/snacks/pro13.jpg",
+        "price": 2000
+    },
+    {
+        "name": "우리밀 라면땅",
+        "image": "../../images/snacks/pro14.jpg",
+        "price": 2000
+    },
+    {
+        "name": "우리밀 참깨스틱",
+        "image": "../../images/snacks/pro15.jpg",
+        "price": 2000
+    },
+    {
+        "name": "골목대장 짱군",
+        "image": "../../images/snacks/pro16.jpg",
+        "price": 2000
+    },
+    {
+        "name": "포도한모금",
+        "image": "../../images/snacks/pro17.jpg",
+        "price": 2000
+    },
+    {
+        "name": "고르곤졸라치즈팝팝",
+        "image": "../../images/snacks/pro18.jpg",
+        "price": 2000
+    },
+    {
+        "name": "골목대장 짱군",
+        "image": "../../images/snacks/pro16.jpg",
+        "price": 2000
+    },
+    {
+        "name": "골목대장 짱군",
+        "image": "../../images/snacks/pro16.jpg",
         "price": 2000
     }
 ]
