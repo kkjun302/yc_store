@@ -66,19 +66,67 @@ document.addEventListener('DOMContentLoaded', function() {
             </form>
         `;
         suggestionsList.appendChild(suggestionItem);
+
+         // Load replies for this suggestion
+         loadReplies(item.id);
+    }
+    
+    function loadReplies(suggestionId) {
+        fetch(`/api/replies/${suggestionId}`)
+            .then(response => response.json())
+            .then(replies => {
+                const repliesContainer = document.getElementById(`replies-${suggestionId}`);
+                repliesContainer.innerHTML = ''; // 기존 대댓글 초기화
+                replies.forEach(reply => {
+                    const replyItem = document.createElement('div');
+                    replyItem.classList.add('reply-item');
+                    replyItem.innerHTML = `
+                        <p><strong>관리자:</strong> ${reply.reply}</p>
+                    `;
+                    repliesContainer.appendChild(replyItem);
+                });
+            });
     }
 
+    document.addEventListener('submit', function(e) {
+        if (e.target.classList.contains('replyForm')) {
+            e.preventDefault();
+            const form = e.target;
+            const suggestionId = form.getAttribute('data-suggestion-id');
+            const replyText = form.querySelector('textarea').value;
+
+            fetch('/api/replies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ suggestion_id: suggestionId, reply: replyText })
+            })
+            .then(response => response.json())
+            .then(() => {
+                form.reset();
+
+                // 새 대댓글을 즉시 UI에 추가
+                const repliesContainer = document.getElementById(`replies-${suggestionId}`);
+                const replyItem = document.createElement('div');
+                replyItem.classList.add('reply-item');
+                replyItem.innerHTML = `
+                    <p><strong>관리자:</strong> ${replyText}</p>
+                `;
+                repliesContainer.appendChild(replyItem);
+            });
+        }
+    });
 
 
-   /* window.deleteSuggestion = function(id) {
-        fetch(`/api/suggestions/${id}`, { method: 'DELETE' })
+/*
+    window.deleteSuggestion = function(id) {
+        //fetch(`/api/suggestions/${id}`, { method: 'DELETE' })
             .then(response => response.json())
             .then(data => {
                 console.log(data.message);
                 fetchSuggestions();
             });
-    }*/
-
+    }
+*/
     // Fetch suggestions every 30 seconds
     setInterval(fetchSuggestions, 30000);
 });
