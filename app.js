@@ -86,6 +86,18 @@ app.delete('/api/suggestions/:id', (req, res) => {
   });
 });
 
+// 특정 대댓글 삭제
+app.delete('/api/replies/:id', (req, res) => {
+  const { id } = req.params;
+
+  db.run("DELETE FROM replies WHERE id = ?", id, function (err) {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    } 
+    res.json({ message: "Reply deleted successfully" });
+  });
+});
 
 
 // 대댓글 API
