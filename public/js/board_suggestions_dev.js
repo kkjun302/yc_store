@@ -91,13 +91,16 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.deleteReply = function(replyId, suggestionId) {
-        fetch(`/api/replies/${replyId}`, { method: 'DELETE' })
-            .then(response => response.json())
-            .then(data => {
-                console.log(data.message);
-                loadReplies();
-            });
-    }
+    fetch(`/api/replies/${replyId}`, { method: 'DELETE' })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data.message);
+
+            // suggestionId를 전달하여 해당 제안의 대댓글만 다시 불러오기
+            loadReplies(suggestionId);
+        })
+        .catch(err => console.error("Failed to delete reply:", err));
+};
 
     
     document.addEventListener('submit', function(e) {
