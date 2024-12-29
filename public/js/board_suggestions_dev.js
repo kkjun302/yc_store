@@ -1,4 +1,4 @@
-// board_suggestions.js
+//board_suggestions_dev.js
 
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('suggestionForm');
@@ -28,9 +28,9 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch('/api/suggestions', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
+                'Content-Type': 'application/json',
             },
-            body: `name=${encodeURIComponent(name)}&suggestion=${encodeURIComponent(suggestion)}`
+            body: JSON.stringify({ name, suggestion })
         })
         .then(response => response.json())
         .then(data => {
@@ -44,10 +44,42 @@ document.addEventListener('DOMContentLoaded', function() {
         const suggestionItem = document.createElement('div');
         suggestionItem.classList.add('suggestion-item');
         suggestionItem.innerHTML = `
-            <p><strong>${item.name}</strong>: ${item.suggestion}</p>
-            <button onclick="deleteSuggestion(${item.id})">삭제</button>
+            <!-- 댓글 -->
+            <div class="comment">
+                <p><strong>${item.name}</strong>: ${item.suggestion}</p>
+                <button onclick="deleteSuggestion(${item.id})">삭제</button>
+            </div>
+            
+            <!-- 대댓글 영역 -->
+            <div id="replies-${item.id}" class="replies">
+                <!-- 대댓글이 동적으로 추가됨 -->
+            </div>
+            <form class="replyForm" data-suggestion-id="${item.id}">
+                <textarea placeholder="대댓글 작성" required></textarea>
+                <button type="submit">대댓글 작성</button>
+            </form>
         `;
         suggestionsList.appendChild(suggestionItem);
+
+        // Load replies for this suggestion
+        loadReplies(item.id);
+    }
+
+    function loadReplies(suggestionId) {
+        fetch(`/api/replies/${suggestionId}`)
+            .then(response => response.json())
+            .then(replies => {
+                const repliesContainer = document.getElementById(`replies-${suggestionId}`);
+                repliesContainer.innerHTML = ''; // 기존 대댓글 초기화
+                replies.forEach(reply => {
+                    const replyItem = document.createElement('div');
+                    replyItem.classList.add('reply-item');
+                    replyItem.innerHTML = `
+                        <p><strong>관리자:</strong> ${reply.reply}</p>
+                    `;
+                    repliesContainer.appendChild(replyItem);
+                });
+            });
     }
 
     window.deleteSuggestion = function(id) {
@@ -59,6 +91,31 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
-    // Fetch suggestions every 30 seconds
-    setInterval(fetchSuggestions, 30000);
+    document.addEventListener('submit', function(e) {
+        if (e.target.classList.contains('replyForm')) {
+            e.preventDefault();
+            const form = e.target;
+            const suggestionId = form.getAttribute('data-suggestion-id');
+            const replyText = form.querySelector('textarea').value;
+
+            fetch('/api/replies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ suggestion_id: suggestionId, reply: replyText })
+            })
+            .then(response => response.json())
+            .then(() => {
+                form.reset();
+
+                // 새 대댓글을 즉시 UI에 추가
+                const repliesContainer = document.getElementById(`replies-${suggestionId}`);
+                const replyItem = document.createElement('div');
+                replyItem.classList.add('reply-item');
+                replyItem.innerHTML = `
+                    <p><strong>관리자:</strong> ${replyText}</p>
+                `;
+                repliesContainer.appendChild(replyItem);
+            });
+        }
+    });
 });
