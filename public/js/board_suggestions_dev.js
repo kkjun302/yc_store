@@ -91,12 +91,13 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.deleteReply = function(replyId, suggestionId) {
-    fetch(`/api/replies/${replyId}`, { method: 'DELETE' })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data.message);
-        })
-};
+        fetch(`/api/replies/${replyId}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                loadReplies();
+            });
+    }
 
     
     document.addEventListener('submit', function(e) {
