@@ -64,18 +64,18 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function loadReplies(suggestionId) {
-        fetch(/api/replies/${suggestionId})
+        fetch(`/api/replies/${suggestionId}`)
             .then(response => response.json())
             .then(replies => {
-                const repliesContainer = document.getElementById(replies-${suggestionId});
+                const repliesContainer = document.getElementById(`replies-${suggestionId}`);
                 repliesContainer.innerHTML = ''; // 기존 대댓글 초기화
                 replies.forEach(reply => {
                     const replyItem = document.createElement('div');
                     replyItem.classList.add('reply-item');
-                    replyItem.innerHTML = 
+                    replyItem.innerHTML = `
                         <p><strong>관리자:</strong> ${reply.reply}</p>
                         <button onclick="deleteReply(${reply.id}, ${suggestionId})">삭제</button>
-                    ;
+                    `;
                     repliesContainer.appendChild(replyItem);
                 });
             });
@@ -91,18 +91,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     window.deleteReply = function(replyId, suggestionId) {
-    fetch(`/api/replies/${replyId}`, { method: 'DELETE' })
-        .then(response => response.json())
-        .then(data => {
-            console.log(data.message);
+        fetch(`/api/replies/${replyId}`, { method: 'DELETE' })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);
+                loadReplies(suggestionId); // suggestionId를 전달하여 해당 제안의 대댓글만 다시 불러오기
+            })
+            .catch(err => console.error("Failed to delete reply:", err));
+    };
 
-            // suggestionId를 전달하여 해당 제안의 대댓글만 다시 불러오기
-            loadReplies(suggestionId);
-        })
-        .catch(err => console.error("Failed to delete reply:", err));
-};
-
-    
     document.addEventListener('submit', function(e) {
         if (e.target.classList.contains('replyForm')) {
             e.preventDefault();
