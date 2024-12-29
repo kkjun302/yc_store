@@ -63,27 +63,22 @@ document.addEventListener('DOMContentLoaded', function() {
         loadReplies(item.id);
     }
 
-        function loadReplies(suggestionId) {
-        fetch(`/api/replies/${suggestionId}`)
+    function loadReplies(suggestionId) {
+        fetch(/api/replies/${suggestionId})
             .then(response => response.json())
             .then(replies => {
-                const repliesContainer = document.getElementById(`replies-${suggestionId}`);
+                const repliesContainer = document.getElementById(replies-${suggestionId});
                 repliesContainer.innerHTML = ''; // 기존 대댓글 초기화
-                renderReplies(replies, repliesContainer);
+                replies.forEach(reply => {
+                    const replyItem = document.createElement('div');
+                    replyItem.classList.add('reply-item');
+                    replyItem.innerHTML = 
+                        <p><strong>관리자:</strong> ${reply.reply}</p>
+                        <button onclick="deleteReply(${reply.id}, ${suggestionId})">삭제</button>
+                    ;
+                    repliesContainer.appendChild(replyItem);
+                });
             });
-    }
-
-
-    function renderReplies(replies, container) {
-        replies.forEach(reply => {
-            const replyItem = document.createElement('div');
-            replyItem.classList.add('reply-item');
-            replyItem.innerHTML = `
-                <p><strong>관리자:</strong> ${reply.reply}</p>
-                <button onclick="deleteReply(${reply.id}, ${reply.suggestion_id})">삭제</button>
-            `;
-            container.appendChild(replyItem);
-        });
     }
 
     window.deleteSuggestion = function(id) {
