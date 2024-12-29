@@ -55,7 +55,7 @@ let currentPage = 1;
 let productData = [];
 
 // SQLite 기반 API에서 상품 데이터 불러오기
-fetch('/api/products')
+fetch('../data/product.json')
   .then(response => response.json())
   .then(data => {
     productData = data; // 상품 데이터를 전역 변수에 저장
@@ -90,7 +90,7 @@ function displayProducts(page) {
 function createPagination() {
   const paginationContainer = document.createElement('div');
   paginationContainer.classList.add('pagination');
-  const container = document.querySelector('#products');
+  const container = document.querySelector('.product-grid');
   container.appendChild(paginationContainer);
 
   const totalPages = Math.ceil(productData.length / itemsPerPage);
