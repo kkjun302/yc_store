@@ -1,10 +1,13 @@
-/* board_suggestions.css */
+//board_suggestion.css
+
+/* 전체 컨테이너 스타일 */
 .container {
     max-width: 800px;
     margin: 0 auto;
     padding: 20px;
 }
 
+/* 헤딩 스타일 */
 h1 {
     color: #333;
     text-align: center;
@@ -17,6 +20,7 @@ p {
     margin-bottom: 30px;
 }
 
+/* 건의사항 작성 폼 */
 #suggestionForm {
     display: flex;
     flex-direction: column;
@@ -44,27 +48,32 @@ p {
     background-color: #45a049;
 }
 
+/* 건의사항 리스트 */
 #suggestionsList {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
+/* 개별 건의사항 */
 .suggestion-item {
     background-color: #f9f9f9;
     border: 1px solid #ddd;
     border-radius: 5px;
     padding: 15px;
-    display: flex;
-    justify-content: space-between;
+    /* display: flex; */
+    justify-content: space-between; /* 삭제 버튼 오른쪽으로 이동 */
     align-items: center;
 }
 
+/* 건의사항 텍스트 */
 .suggestion-item p {
     margin: 0;
     text-align: left;
+    flex: 1;
 }
 
+/* 삭제 버튼 */
 .suggestion-item button {
     background-color: #f44336;
     color: white;
@@ -77,4 +86,99 @@ p {
 
 .suggestion-item button:hover {
     background-color: #d32f2f;
+}
+
+/* 댓글 목록 */
+.comments {
+    margin-top: 10px;
+    padding-left: 0;
+}
+
+/* 개별 댓글 */
+.comment-item {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+/* 답글 목록 */
+.replies {
+    margin-top: 10px; /* 댓글과 답글 사이 간격 */
+    margin-left: 15px; /* 답글 들여쓰기 */
+    padding-left: 15px; /* 답글 내용 들여쓰기 */
+    border-left: 2px solid #ddd; /* 답글 영역 구분 */
+}
+
+/* 개별 답글 */
+.reply-item {
+    background-color: #f7f7f7;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 8px;
+    margin-bottom: 10px;
+    font-size: 14px;
+}
+
+/* 답글 작성자 강조 */
+.reply-item strong {
+    color: #4CAF50; /* 답글 작성자 이름 강조 */
+}
+
+.reply-item p {
+    margin: 0;
+}
+
+/* 댓글 및 답글 작성 폼 */
+.commentForm,
+.replyForm {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+textarea {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    resize: none;
+}
+
+textarea::placeholder {
+    color: #999;
+}
+
+/* 작성 버튼 스타일 */
+.commentForm button,
+.replyForm button {
+    align-self: flex-end;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.commentForm button:hover,
+.replyForm button:hover {
+    background-color: #45a049;
+}
+
+/* 사용자 이름 강조 */
+p strong {
+    color: #333;
+}
+
+/* 댓글 및 답글 항목 호버 효과 */
+.comment-item:hover,
+.reply-item:hover {
+    background-color: #f0f0f0;
+    border-color: #ccc;
+    transition: background-color 0.3s, border-color 0.3s;
 }
