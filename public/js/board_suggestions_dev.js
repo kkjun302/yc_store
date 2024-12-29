@@ -1,5 +1,3 @@
-//board_suggestions_dev.js
-
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('suggestionForm');
     const suggestionsList = document.getElementById('suggestionsList');
@@ -43,10 +41,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function displaySuggestion(item) {
         const suggestionItem = document.createElement('div');
         suggestionItem.classList.add('suggestion-item');
-       suggestionItem.innerHTML = `
+        suggestionItem.innerHTML = `
             <!-- 댓글 -->
             <div class="comment">
                 <p><strong>${item.name}</strong>: ${item.suggestion}</p>
+                <button onclick="deleteSuggestion(${item.id})">삭제</button>
+            </div>
+            
             <!-- 대댓글 영역 -->
             <div id="replies-${item.id}" class="replies">
                 <!-- 대댓글이 동적으로 추가됨 -->
