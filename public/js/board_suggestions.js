@@ -70,7 +70,14 @@ document.addEventListener('DOMContentLoaded', function() {
          // Load replies for this suggestion
          loadReplies(item.id);
     }
-    
+
+    document.addEventListener('DOMContentLoaded', function() {
+    // Get all reply forms
+        document.querySelectorAll('.replyForm').forEach(form => {
+            form.style.display = 'none'; // 사용자 화면에서는 숨김 처리
+        });
+    });
+
     function loadReplies(suggestionId) {
         fetch(`/api/replies/${suggestionId}`)
             .then(response => response.json())
