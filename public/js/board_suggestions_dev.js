@@ -43,21 +43,14 @@ document.addEventListener('DOMContentLoaded', function() {
     function displaySuggestion(item) {
         const suggestionItem = document.createElement('div');
         suggestionItem.classList.add('suggestion-item');
-        suggestionItem.innerHTML = `
+       suggestionItem.innerHTML = `
             <!-- 댓글 -->
             <div class="comment">
                 <p><strong>${item.name}</strong>: ${item.suggestion}</p>
-                <button onclick="deleteSuggestion(${item.id})">삭제</button>
-            </div>
-            
             <!-- 대댓글 영역 -->
             <div id="replies-${item.id}" class="replies">
                 <!-- 대댓글이 동적으로 추가됨 -->
             </div>
-            <form class="replyForm" data-suggestion-id="${item.id}">
-                <textarea placeholder="대댓글 작성" required></textarea>
-                <button type="submit">대댓글 작성</button>
-            </form>
         `;
         suggestionsList.appendChild(suggestionItem);
 
