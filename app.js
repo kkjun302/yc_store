@@ -27,6 +27,13 @@ const db = new sqlite3.Database('./yangcheong_store.db', (err) => {
         FOREIGN KEY (suggestion_id) REFERENCES suggestions (id) ON DELETE CASCADE
       )`
     );
+    db.run(`CREATE TABLE IF NOT EXISTS products (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      image TEXT NOT NULL,
+      price INTEGER NOT NULL,
+      likes INTEGER DEFAULT 0
+      )`);
   }
 });
 
@@ -53,6 +60,15 @@ app.get('/api/suggestions', (req, res) => {
     res.json(rows);
   });
 });
+app.get('/api/products', (req, res) => {
+  db.all('SELECT * FROM products', [], (err, rows) => {
+    if (err) {
+      res.status(500).json({ error: err.message });
+      return;
+    }
+    res.json(rows);
+  });
+});
 
 // 새로운 제안 추가
 app.post('/api/suggestions', (req, res) => {
@@ -72,7 +88,33 @@ app.post('/api/suggestions', (req, res) => {
     }
   );
 });
+app.post('/api/like', (req, res) => {
+  const likedProducts = req.body.liked_products; // req.body에서 liked_products 추출
+  console.log('Received data:', likedProducts);
 
+  db.serialize(() => {
+    for (const [productId, likes] of Object.entries(likedProducts)) {
+      db.run(
+        'UPDATE products SET likes = ? WHERE id = ?',
+        [parseInt(likes), parseInt(productId)],
+        function (err) {
+          if (err) {
+            console.error(
+              'Error updating likes for product ID',
+              productId,
+              ':',
+              err.message
+            );
+          } else {
+            console.log(`Likes updated for product ID ${productId}`);
+          }
+        }
+      );
+    }
+  });
+
+  res.status(200).json({ message: 'Likes updated successfully' });
+});
 
 // 특정 제안 삭제
 app.delete('/api/suggestions/:id', (req, res) => {
