@@ -95,10 +95,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             console.log(data.message);
-            // 대댓글 목록 새로고침
-            loadReplies(suggestionId);
         })
-        .catch(err => console.error("Failed to delete reply:", err));
 };
 
     
